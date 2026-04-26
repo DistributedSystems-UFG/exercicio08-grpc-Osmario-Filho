@@ -31,6 +31,31 @@ def run():
         response = stub.ListAllEmployees(EmployeeService_pb2.EmptyMessage())
         print ('All employees: ' + str(response))
 
+        # ==== Novos endpoints ====
+
+        # Update an employee's name
+        response = stub.UpdateEmployeeName(EmployeeService_pb2.EmployeeNameUpdate(id=301, name='Jose Silva Junior'))
+        print ('Updated employee name ' + response.status)
+
+        # Update an entire employee record (name and title)
+        response = stub.UpdateEmployee(EmployeeService_pb2.EmployeeData(id=301, name='Jose Silva', title='Tech Lead'))
+        print ('Updated employee record ' + response.status)
+
+        # Get employees by title
+        response = stub.GetEmployeesByTitle(EmployeeService_pb2.EmployeeTitle(title='Tech Lead'))
+        print ('Employees with title "Tech Lead": ' + str(response))
+
+        # Count total employees
+        response = stub.CountEmployees(EmployeeService_pb2.EmptyMessage())
+        print ('Total employees: ' + str(response.count))
+
+        # Check whether an employee exists
+        response = stub.EmployeeExists(EmployeeService_pb2.EmployeeID(id=301))
+        print ('Employee 301 exists? ' + str(response.exists))
+
+        response = stub.EmployeeExists(EmployeeService_pb2.EmployeeID(id=999))
+        print ('Employee 999 exists? ' + str(response.exists))
+
 if __name__ == '__main__':
     logging.basicConfig()
     run()

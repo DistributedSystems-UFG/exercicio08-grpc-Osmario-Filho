@@ -32,7 +32,7 @@ class EmployeeServer(EmployeeService_pb2_grpc.EmployeeServiceServicer):
     return EmployeeService_pb2.StatusReply(status='OK')
 
   def GetEmployeeDataFromID(self, request, context):
-    usr = [ emp for emp in empDB if (emp['id'] == request.id) ] 
+    usr = [ emp for emp in empDB if (emp['id'] == request.id) ]
     return EmployeeService_pb2.EmployeeData(id=usr[0]['id'], name=usr[0]['name'], title=usr[0]['title'])
 
   def UpdateEmployeeTitle(self, request, context):
@@ -51,9 +51,41 @@ class EmployeeServer(EmployeeService_pb2_grpc.EmployeeServiceServicer):
   def ListAllEmployees(self, request, context):
     list = EmployeeService_pb2.EmployeeDataList()
     for item in empDB:
-      emp_data = EmployeeService_pb2.EmployeeData(id=item['id'], name=item['name'], title=item['title']) 
+      emp_data = EmployeeService_pb2.EmployeeData(id=item['id'], name=item['name'], title=item['title'])
       list.employee_data.append(emp_data)
     return list
+
+  # ==== Novos endpoints ====
+
+  def UpdateEmployeeName(self, request, context):
+    usr = [ emp for emp in empDB if (emp['id'] == request.id) ]
+    if len(usr) == 0:
+      return EmployeeService_pb2.StatusReply(status='NOK')
+    usr[0]['name'] = request.name
+    return EmployeeService_pb2.StatusReply(status='OK')
+
+  def UpdateEmployee(self, request, context):
+    usr = [ emp for emp in empDB if (emp['id'] == request.id) ]
+    if len(usr) == 0:
+      return EmployeeService_pb2.StatusReply(status='NOK')
+    usr[0]['name'] = request.name
+    usr[0]['title'] = request.title
+    return EmployeeService_pb2.StatusReply(status='OK')
+
+  def GetEmployeesByTitle(self, request, context):
+    result = EmployeeService_pb2.EmployeeDataList()
+    for item in empDB:
+      if item['title'] == request.title:
+        emp_data = EmployeeService_pb2.EmployeeData(id=item['id'], name=item['name'], title=item['title'])
+        result.employee_data.append(emp_data)
+    return result
+
+  def CountEmployees(self, request, context):
+    return EmployeeService_pb2.EmployeeCount(count=len(empDB))
+
+  def EmployeeExists(self, request, context):
+    found = any(emp['id'] == request.id for emp in empDB)
+    return EmployeeService_pb2.ExistsReply(exists=found)
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

@@ -18,7 +18,18 @@ service EmployeeService {
   rpc DeleteEmployee (EmployeeID) returns (StatusReply) {}
   // List all employees
   rpc ListAllEmployees (EmptyMessage) returns (EmployeeDataList) {}
-  
+
+  // ==== Novos endpoints ====
+  // Update an employee´s name
+  rpc UpdateEmployeeName (EmployeeNameUpdate) returns (StatusReply) {}
+  // Update an entire employee record (name and title)
+  rpc UpdateEmployee (EmployeeData) returns (StatusReply) {}
+  // Get all employees with a given title
+  rpc GetEmployeesByTitle (EmployeeTitle) returns (EmployeeDataList) {}
+  // Count total number of employees
+  rpc CountEmployees (EmptyMessage) returns (EmployeeCount) {}
+  // Check whether an employee with a given ID exists
+  rpc EmployeeExists (EmployeeID) returns (ExistsReply) {}
 }
 
 message EmployeeData {
@@ -44,4 +55,22 @@ message EmptyMessage{}
 
 message EmployeeDataList{
   repeated EmployeeData employee_data = 1;
+}
+
+// ==== Novas mensagens ====
+message EmployeeNameUpdate {
+  uint32 id = 1;
+  string name = 2;
+}
+
+message EmployeeTitle {
+  string title = 1;
+}
+
+message EmployeeCount {
+  uint32 count = 1;
+}
+
+message ExistsReply {
+  bool exists = 1;
 }
